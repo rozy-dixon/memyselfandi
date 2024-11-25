@@ -1,0 +1,33 @@
+{
+    "title": "GAME TITLE",
+    "poetry": {
+        "partOne": {
+            "location": "Poetry.js",
+            "text": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"
+            ]
+        },
+        "partTwo": {
+            "location": "Card.js",
+            "text": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"
+            ]
+        }
+    }
+}
