@@ -17,6 +17,12 @@ class Title extends Phaser.Scene {
         // running checks
         console.log('%cTITLE SCENE :^)', testColor)
 
+        //#region ------------------------------- DATA RETRIEVAL
+
+        this.startingPosition = this.JSON.poetry[0].location
+
+        //#endregion
+
         //#region ------------------------------- MENU TEXT
 
         // create menu display
@@ -103,6 +109,8 @@ class Title extends Phaser.Scene {
         //#endregion
     }
 
+    //#region ----------------------------------- CONTENT SETUP HELPERS
+
     renderText(element) {
         // ensure new lines don't display 'undefined'
         if (element.class == 'new-line') {
@@ -157,8 +165,17 @@ class Title extends Phaser.Scene {
         return array.indexOf(current)
     }
 
+    //#endregion
+
+    //#region ----------------------------------- MENU OPTION RESULTS
+
     start() {
-        this.scene.start('cardsScene')
+        if (this.scene.isActive('titleScene')) {
+            this.scene.start(`${this.startingPosition}`, {
+                STANZA: 0,
+                JSON: this.JSON,
+            })
+        }
     }
 
     clean(element, textObjects, titleText) {
@@ -185,6 +202,8 @@ class Title extends Phaser.Scene {
             })
         })
     }
+
+    //#endregion
 }
 
 // check that condition is correct, stop program if it isn't
