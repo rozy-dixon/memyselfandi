@@ -7,10 +7,22 @@ class Poetry extends Phaser.Scene {
         this.FONTSIZE = 30
         this.PADDING = 5
 
-        this.TEXTSTYLING = { fontSize: this.FONTSIZE + 'px', wordWrap: { width: 920, useAdvancedWrap: true }, lineSpacing: this.PADDING - 1 }
+        this.TEXTSTYLING = {
+            fontSize: this.FONTSIZE + 'px',
+            wordWrap: { width: 920, useAdvancedWrap: true },
+            lineSpacing: this.PADDING - 1,
+        }
 
         this.STANZA = data.STANZA
         this.JSON = data.JSON
+    }
+
+    preload() {
+        this.images = this.JSON.poetry[this.STANZA].images
+
+        this.images.forEach(element => {
+            this.load.image(element.image, element.image)
+        })
     }
 
     create() {
@@ -21,21 +33,54 @@ class Poetry extends Phaser.Scene {
 
         this.nextPosition = this.JSON.poetry[this.STANZA].location
         const displayText = []
+        const displayImage = []
 
-        this.JSON.poetry[this.STANZA].text.forEach((element) => {
-            const formattingObject = this.add.text(centerX, centerY, element, this.TEXTSTYLING).setAlpha(0)
-            formattingObject.getWrappedText().forEach((line) => {
+        // src = https://chatgpt.com/share/674cebf2-5b8c-800d-ab1e-9d93275c8f9d
+        const imageMap = new Map()
+        this.images.forEach(element => {
+            element.indexes.forEach(index => {
+                imageMap.set(index, element.image)
+            })
+        })
+
+        let index = 0
+        this.JSON.poetry[this.STANZA].text.forEach(element => {
+            // if images contains the index in one of the ranges, add image name to displayImage
+            // otherwise, add null
+
+            if (imageMap.has(index)) {
+                console.log(index, imageMap.get(index))
+            } else {
+                console.log(index, null)
+            }
+
+            console.log(this.images)
+
+            const formattingObject = this.add
+                .text(centerX, centerY, element, this.TEXTSTYLING)
+                .setAlpha(0)
+            formattingObject.getWrappedText().forEach(line => {
                 displayText.push(line)
             })
+
             formattingObject.destroy()
+
+            index++
         })
 
         //#endregion
 
+        this.images.forEach(element => {
+            this.add.image(centerX / 2, centerY, element.image).setOrigin(0.5, 0.5)
+        })
+
+        //#region ------------------------------- DISPLAY PREP
+
         this.posY = centerY
         let i = 0
 
-        // add pause on enter
+        // [ ] add pause on begin
+
         const renderNext = () => {
             if (i < displayText.length) {
                 this.renderLine(displayText[i], renderNext)
@@ -46,6 +91,8 @@ class Poetry extends Phaser.Scene {
         this.stanza = this.add.group()
 
         renderNext()
+
+        //#endregion
     }
 
     renderLine(text, renderNext) {
@@ -58,7 +105,7 @@ class Poetry extends Phaser.Scene {
         let i = 0
         const len = text.length
         if (posY >= 1235) {
-            this.stanza.getChildren().forEach((element) => {
+            this.stanza.getChildren().forEach(element => {
                 element.setY(element.y - 35)
             })
             posY = 1200
@@ -66,6 +113,8 @@ class Poetry extends Phaser.Scene {
         const textObject = this.add.text(centerX, posY, '', this.TEXTSTYLING)
 
         this.stanza.add(textObject)
+
+        // [ ] when textobject reaches the top of the page, delete
 
         const event = this.time.addEvent({
             delay: 60,

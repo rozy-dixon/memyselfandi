@@ -20,6 +20,7 @@ class Title extends Phaser.Scene {
         //#region ------------------------------- DATA RETRIEVAL
 
         this.startingPosition = this.JSON.poetry[0].location
+        this.title = this.JSON.title
 
         //#endregion
 
@@ -27,7 +28,7 @@ class Title extends Phaser.Scene {
 
         // create menu display
         const titleText = [
-            { text: 'game title', class: 'title' },
+            { text: this.title, class: 'title' },
             { class: 'new-line' },
             {
                 text: 'press enter to start',
