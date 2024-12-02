@@ -45,22 +45,17 @@ class Poetry extends Phaser.Scene {
 
         let index = 0
         this.JSON.poetry[this.STANZA].text.forEach(element => {
-            // if images contains the index in one of the ranges, add image name to displayImage
-            // otherwise, add null
-
-            if (imageMap.has(index)) {
-                console.log(index, imageMap.get(index))
-            } else {
-                console.log(index, null)
-            }
-
-            console.log(this.images)
-
             const formattingObject = this.add
                 .text(centerX, centerY, element, this.TEXTSTYLING)
                 .setAlpha(0)
             formattingObject.getWrappedText().forEach(line => {
                 displayText.push(line)
+
+                if (imageMap.has(index)) {
+                    displayImage.push(imageMap.get(index))
+                } else {
+                    displayImage.push(null)
+                }
             })
 
             formattingObject.destroy()
@@ -70,9 +65,9 @@ class Poetry extends Phaser.Scene {
 
         //#endregion
 
-        this.images.forEach(element => {
-            this.add.image(centerX / 2, centerY, element.image).setOrigin(0.5, 0.5)
-        })
+        //this.images.forEach(element => {
+        //    this.add.image(centerX / 2, centerY, element.image).setOrigin(0.5, 0.5)
+        //})
 
         //#region ------------------------------- DISPLAY PREP
 
@@ -81,9 +76,11 @@ class Poetry extends Phaser.Scene {
 
         // [ ] add pause on begin
 
+        this.image = undefined
         const renderNext = () => {
             if (i < displayText.length) {
                 this.renderLine(displayText[i], renderNext)
+                this.renderImage(displayImage[i])
                 i++
             }
         }
@@ -114,6 +111,8 @@ class Poetry extends Phaser.Scene {
 
         this.stanza.add(textObject)
 
+        console.log()
+
         // [ ] when textobject reaches the top of the page, delete
 
         const event = this.time.addEvent({
@@ -129,13 +128,22 @@ class Poetry extends Phaser.Scene {
 
                 if (i >= len) {
                     event.remove()
-                    if (onComplete) {
-                        onComplete()
-                    }
+                    
+                    // Call renderNext()
+                    onComplete()
                 }
             },
             callbackScope: this,
             loop: true,
         })
+    }
+
+    renderImage(key) {
+        if (this.image == undefined && key != null) {
+            this.image = this.add.image(centerX / 2, centerY, key).setOrigin(0.5, 0.5)
+        } else if (this.image != undefined && key == null) {
+            this.image.destroy()
+            this.image = undefined
+        }
     }
 }
