@@ -65,10 +65,6 @@ class Poetry extends Phaser.Scene {
 
         //#endregion
 
-        //this.images.forEach(element => {
-        //    this.add.image(centerX / 2, centerY, element.image).setOrigin(0.5, 0.5)
-        //})
-
         //#region ------------------------------- DISPLAY PREP
 
         this.posY = centerY
@@ -99,8 +95,13 @@ class Poetry extends Phaser.Scene {
 
     typewriteText(text, posY, onComplete) {
         // src = https://phaser.discourse.group/t/how-to-reveal-text-word-by-word/9183
+        if (text.length == 0) {
+            text = ' '
+        }
+
         let i = 0
         const len = text.length
+
         if (posY >= 1235) {
             this.stanza.getChildren().forEach(element => {
                 element.setY(element.y - 35)
@@ -128,7 +129,7 @@ class Poetry extends Phaser.Scene {
 
                 if (i >= len) {
                     event.remove()
-                    
+
                     // Call renderNext()
                     onComplete()
                 }
@@ -139,11 +140,14 @@ class Poetry extends Phaser.Scene {
     }
 
     renderImage(key) {
-        if (this.image == undefined && key != null) {
-            this.image = this.add.image(centerX / 2, centerY, key).setOrigin(0.5, 0.5)
-        } else if (this.image != undefined && key == null) {
+        if (this.image != undefined) {
             this.image.destroy()
-            this.image = undefined
+            if (key == null) {
+                this.image = undefined
+            }
+        }
+        if (key != null) {
+            this.image = this.add.image(centerX / 2, centerY, key).setOrigin(0.5, 0.5)
         }
     }
 }

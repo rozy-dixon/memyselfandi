@@ -36,3 +36,5 @@ const goodColor = 'color: #cfd1af;'
 const badColor = 'color: #c088ae;'
 // key variables
 let cursors, keyENTER
+// jsonData
+let jsonObject

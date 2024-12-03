@@ -17,6 +17,8 @@ class Title extends Phaser.Scene {
         // running checks
         console.log('%cTITLE SCENE :^)', testColor)
 
+        console.log(this.JSON)
+
         //#region ------------------------------- DATA RETRIEVAL
 
         this.startingPosition = this.JSON.poetry[0].location
@@ -27,13 +29,18 @@ class Title extends Phaser.Scene {
         //#region ------------------------------- MENU TEXT
 
         // create menu display
-        const titleText = [
+        this.titleText = [
             { text: this.title, class: 'title' },
             { class: 'new-line' },
             {
                 text: 'press enter to start',
                 interactable: true,
                 function: this.start.bind(this),
+            },
+            {
+                text: 'press enter to import',
+                interactable: true,
+                function: this.import.bind(this),
             },
             {
                 text: 'press enter to clean',
@@ -45,63 +52,63 @@ class Title extends Phaser.Scene {
         ]
 
         // src = https://chatgpt.com/share/67437d00-c64c-800d-aa91-7ae028b86ade
-        const textObjects = []
-        let current = titleText.find(element => element.interactable)
+        this.textObjects = []
+        let current = this.titleText.find(element => element.interactable)
 
         // render text
         this.posY = centerY
-        titleText.forEach(element => {
+        this.titleText.forEach(element => {
             const text = this.renderText(element)
-            textObjects.push(text)
+            this.textObjects.push(text)
         })
 
-        this.selected = textObjects[titleText.indexOf(current)]
+        this.selected = this.textObjects[this.titleText.indexOf(current)]
 
         //#endregion
 
         //#region ------------------------------- CURSOR MOVEMENT
 
         // assign cursor and allow for move
-        this.updateCursorText(titleText, textObjects, current)
+        this.updateCursorText(this.titleText, this.textObjects, current)
 
         this.input.keyboard.on('keydown-UP', () => {
-            current = titleText[this.getUpdatedCursorPos(titleText, current, -1)]
-            this.updateCursorText(titleText, textObjects, current)
-            this.selected = textObjects[titleText.indexOf(current)]
+            current = this.titleText[this.getUpdatedCursorPos(this.titleText, current, -1)]
+            this.updateCursorText(this.titleText, this.textObjects, current)
+            this.selected = this.textObjects[this.titleText.indexOf(current)]
         })
 
         this.input.keyboard.on('keydown-DOWN', () => {
-            current = titleText[this.getUpdatedCursorPos(titleText, current, 1)]
-            this.updateCursorText(titleText, textObjects, current)
-            this.selected = textObjects[titleText.indexOf(current)]
+            current = this.titleText[this.getUpdatedCursorPos(this.titleText, current, 1)]
+            this.updateCursorText(this.titleText, this.textObjects, current)
+            this.selected = this.textObjects[this.titleText.indexOf(current)]
         })
 
         //#endregion
 
         //#region ------------------------------- ALLOW INTERACTION
 
-        titleText.forEach(element => {
+        this.titleText.forEach(element => {
             if (element.reference) {
-                const indexes = [...titleText.keys()].filter(
-                    index => titleText[index].id === element.reference,
+                const indexes = [...this.titleText.keys()].filter(
+                    index => this.titleText[index].id === element.reference,
                 )
 
                 indexes.forEach(targetIndex => {
-                    const targetElement = textObjects[targetIndex]
+                    const targetElement = this.textObjects[targetIndex]
                     document.addEventListener('keydown', event => {
                         if (this.selected == targetElement && event.key === 'Enter') {
-                            textObjects[titleText.indexOf(element)].setAlpha(1)
+                            this.textObjects[this.titleText.indexOf(element)].setAlpha(1)
                         }
                     })
                 })
             }
 
             if (element.function) {
-                const targetElement = textObjects[titleText.indexOf(element)]
+                const targetElement = this.textObjects[this.titleText.indexOf(element)]
 
                 document.addEventListener('keydown', event => {
                     if (this.selected === targetElement && event.key === 'Enter') {
-                        element.function.call(this, targetElement, textObjects, titleText)
+                        element.function.call(this, targetElement, this.textObjects, this.titleText)
                     }
                 })
             }
@@ -177,6 +184,34 @@ class Title extends Phaser.Scene {
                 JSON: this.JSON,
             })
         }
+    }
+
+    import() {
+        this.input = document.createElement('input')
+        this.input.type = 'file'
+
+        this.input.addEventListener('change', () => {
+            const jsonFile = this.input.files[0]
+            if (jsonFile) {
+                console.log(true)
+
+                const reader = new FileReader()
+                reader.onload = event => {
+                    console.log('File content:', event.target.result)
+                    this.JSON = JSON.parse(event.target.result)
+
+                    this.titleText[0].text = this.JSON.title
+                    this.textObjects[0].setText(this.JSON.title)
+                }
+
+                reader.readAsText(jsonFile)
+            } else {
+                console.log('No file selected.')
+            }
+        })
+
+        // Trigger the file dialog
+        this.input.click()
     }
 
     clean(element, textObjects, titleText) {
