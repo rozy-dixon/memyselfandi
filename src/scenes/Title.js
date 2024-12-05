@@ -115,6 +115,8 @@ class Title extends Phaser.Scene {
         })
 
         //#endregion
+
+        //this.input.on('pointerdown', this.importImage);
     }
 
     //#region ----------------------------------- CONTENT SETUP HELPERS
@@ -210,7 +212,7 @@ class Title extends Phaser.Scene {
             }
         })
 
-        // Trigger the file dialog
+        // trigger the file dialog
         this.input.click()
     }
 
@@ -240,6 +242,27 @@ class Title extends Phaser.Scene {
     }
 
     //#endregion
+
+    //#region ----------------------------------- IMAGE TESTING
+    importImage() {
+        console.log('image time')
+
+        this.input = document.createElement('input')
+        this.input.type = 'file'
+
+        this.input.addEventListener('change', () => {
+            const imageFile = this.input.files[0]
+            if (imageFile) {
+                console.log(imageFile)
+
+                
+            } else {
+                console.log('No file selected.')
+            }
+        })
+        
+        this.input.click()
+    }
 }
 
 // check that condition is correct, stop program if it isn't

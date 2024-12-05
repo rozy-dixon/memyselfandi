@@ -41,15 +41,15 @@
             ],
             "images": [
                 {
-                    "image": "./assets/images/dishes-in-use.jpg",
+                    "image": "./assets/images/dishes.jpg",
                     "indexes": [ 4, 5, 6, 7, 8 ]
                 },
                 {
-                    "image": "./assets/images/even-more-dishes.jpg",
+                    "image": "./assets/images/breakfast.jpg",
                     "indexes": [ 13, 14, 18, 19, 20 ]
                 },
                 {
-                    "image": "./assets/images/are-writers-made-or-born.jpg",
+                    "image": "./assets/images/more-dishes.jpg",
                     "indexes": [ 1, 12, 17 ]
                 }
             ]
