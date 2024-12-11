@@ -12,7 +12,9 @@ class Poetry extends Phaser.Scene {
             wordWrap: { width: 920, useAdvancedWrap: true },
             lineSpacing: this.PADDING - 1,
         }
-        this.TEXTORIGIN = mobile ? 30 : centerX
+        this.TEXTORIGIN = mobile ? 40 : centerX
+
+        this.GESTURE = mobile ? 'swipe right to ' : 'press enter to '
 
         this.STANZA = data.STANZA
         this.JSON = data.JSON
@@ -91,14 +93,24 @@ class Poetry extends Phaser.Scene {
         renderNext()
 
         //#endregion
+
+        this.delay = 60
+    }
+
+    update() {
+        if (this.input.activePointer.isDown) {
+            this.delay = 15
+        } else {
+            this.delay = 60
+        }
     }
 
     renderLine(text, renderNext, lastInStanza) {
         this.posY += this.FONTSIZE + this.PADDING
-        this.typewriteText(text, this.posY, renderNext, lastInStanza)
+        this.typewriteText(text, this.posY, renderNext, lastInStanza, this.delay)
     }
 
-    typewriteText(text, posY, onComplete, lastInStanza) {
+    typewriteText(text, posY, onComplete, lastInStanza, delay = 60) {
         // src = https://phaser.discourse.group/t/how-to-reveal-text-word-by-word/9183
         if (text.length == 0) {
             text = ' '
@@ -119,7 +131,7 @@ class Poetry extends Phaser.Scene {
         this.stanza.add(textObject)
 
         const event = this.time.addEvent({
-            delay: 60,
+            delay: delay,
             callback: () => {
                 textObject.text += text[i]
                 i++
@@ -137,8 +149,8 @@ class Poetry extends Phaser.Scene {
                             textObject.setAlpha(textObject.alpha - 0.05)
                         } else if (lastInStanza && textObject.alpha <= 0) {
                             this.endButton = this.createEnd()
-                            document.addEventListener('keydown', event => {
-                                if (this.endButton && event.key === 'Enter') {
+                            this.input.keyboard.on('keydown-ENTER', () => {
+                                if (this.endButton) {
                                     const tone = this.sound.add('tone')
                                     tone.play()
                                     tone.on('complete', () => {
@@ -187,6 +199,11 @@ class Poetry extends Phaser.Scene {
 
     createEnd() {
         // add text to screen
-        return this.add.text(this.TEXTORIGIN, 1200, '> ' + 'press enter to return', this.TEXTSTYLING)
+        return this.add.text(
+            this.TEXTORIGIN,
+            1200,
+            '> ' + this.GESTURE + 'return',
+            this.TEXTSTYLING,
+        )
     }
 }

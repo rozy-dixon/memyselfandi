@@ -5,7 +5,7 @@ let dimensions = { width: 1920, height: 1280 }
 const padding = 0.01
 
 if (window.innerHeight <= window.innerWidth) {
-    dimensions = { width: 980, height: 1280 }
+    dimensions = { width: 1000, height: 1280 }
 }
 
 // game config
@@ -24,7 +24,7 @@ let config = {
         window.innerHeight / dimensions.height - padding,
         window.innerWidth / dimensions.width - padding,
     ),
-    scene: [Load, Title, Poetry, Cards, Clicking, Keys],
+    scene: [Load, Testing, Title, Poetry, Keys],
 }
 
 // game variables
@@ -43,14 +43,16 @@ let cursors, keyENTER
 // jsonData
 let jsonObject
 // height greater than width
-const mobile = (dimensions.height > dimensions.width) == true
+const mobile = dimensions.height > dimensions.width == true
 
 function checkMobile() {
-    return (navigator.userAgent.match(/Android/i)
-    || navigator.userAgent.match(/webOS/i)
-    || navigator.userAgent.match(/iPhone/i)
-    || navigator.userAgent.match(/iPad/i)
-    || navigator.userAgent.match(/iPod/i)
-    || navigator.userAgent.match(/BlackBerry/i)
-    || navigator.userAgent.match(/Windows Phone/i)) == true
+    return (
+        (navigator.userAgent.match(/Android/i) ||
+            navigator.userAgent.match(/webOS/i) ||
+            navigator.userAgent.match(/iPhone/i) ||
+            navigator.userAgent.match(/iPad/i) ||
+            navigator.userAgent.match(/iPod/i) ||
+            navigator.userAgent.match(/BlackBerry/i) ||
+            navigator.userAgent.match(/Windows Phone/i)) == true
+    )
 }

@@ -16,7 +16,7 @@ class Load extends Phaser.Scene {
     create() {
         // running checks
         console.log('%cLOAD SCENE :^)', testColor)
-
+        
         const song = this.sound.add('sound')
         song.play()
         song.on('complete', () => {
@@ -28,7 +28,7 @@ class Load extends Phaser.Scene {
         if (localStorage.getItem('JSONdata') != undefined) {
             jsonData = JSON.parse(localStorage.getItem('JSONdata'))
         }
-        
+
         let infection = [
             'i have a tendency towards superstition',
             'an uncharacteristic reliance on comfortable inevitability',
@@ -60,7 +60,15 @@ class Load extends Phaser.Scene {
         // account for empty
         if (poetry.length <= 1 && poetry[0] == '') {
             poetry.pop()
-            poetry.push(infection)
+
+            poetry.push([
+                "if i'm honest, i know there’s little that i'll always do",
+                'but in the end,',
+                'i know',
+                'a worm, or a very peristent crow, will be a little less hungry,',
+                "that in dirt and sand, painted wooden boards, i'll be better",
+            ])
+
             return poetry
         }
 

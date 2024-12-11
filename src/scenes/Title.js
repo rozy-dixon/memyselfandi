@@ -12,7 +12,9 @@ class Title extends Phaser.Scene {
 
         this.JSON = data.JSON
 
-        this.TEXTORIGIN = mobile ? 30 : centerX
+        this.TEXTORIGIN = mobile ? 40 : centerX
+        this.GESTURE = mobile ? 'tap to ' : 'press enter to '
+        this.YN = mobile ? ' right to confirm, left to cancel' : ' (y/n)'
     }
 
     create() {
@@ -33,28 +35,28 @@ class Title extends Phaser.Scene {
             { text: this.title, class: 'title' },
             { class: 'new-line' },
             {
-                text: 'press enter to start',
+                text: this.GESTURE + 'start',
                 interactable: true,
                 function: this.start.bind(this),
             },
             {
-                text: 'press enter to write',
+                text: this.GESTURE + 'write',
                 interactable: true,
                 function: this.write.bind(this),
             },
             {
-                text: 'press enter to import',
+                text: this.GESTURE + 'import',
                 interactable: true,
                 function: this.import.bind(this),
             },
             { class: 'new-line' },
             {
-                text: 'press enter to clean',
+                text: this.GESTURE + 'clean',
                 interactable: true,
                 id: 'clean',
                 function: this.clean.bind(this),
             },
-            { text: 'are you sure? (y/n)', displayable: true, reference: 'clean', tab: true },
+            { text: 'are you sure?' + this.YN, displayable: true, reference: 'clean', tab: true },
         ]
 
         // src = https://chatgpt.com/share/67437d00-c64c-800d-aa91-7ae028b86ade
@@ -91,6 +93,15 @@ class Title extends Phaser.Scene {
 
         //#endregion
 
+        //#region ------------------------------- SWIPE INTERACTION
+
+        this.clicking = false
+        document.addEventListener('swipe', event => {
+            this.input.keyboard.emit('keydown-' + event.detail.direction)
+        })
+
+        //#endregion
+
         //#region ------------------------------- ALLOW INTERACTION
 
         this.titleText.forEach(element => {
@@ -101,8 +112,8 @@ class Title extends Phaser.Scene {
 
                 indexes.forEach(targetIndex => {
                     const targetElement = this.textObjects[targetIndex]
-                    document.addEventListener('keydown', event => {
-                        if (this.selected == targetElement && event.key === 'Enter') {
+                    this.input.keyboard.on('keydown-ENTER', () => {
+                        if (this.selected == targetElement) {
                             this.textObjects[this.titleText.indexOf(element)].setAlpha(1)
                         }
                     })
@@ -112,8 +123,8 @@ class Title extends Phaser.Scene {
             if (element.function) {
                 const targetElement = this.textObjects[this.titleText.indexOf(element)]
 
-                document.addEventListener('keydown', event => {
-                    if (this.selected === targetElement && event.key === 'Enter') {
+                this.input.keyboard.on('keydown-ENTER', () => {
+                    if (this.selected === targetElement) {
                         element.function.call(this, targetElement, this.textObjects, this.titleText)
                     }
                 })
@@ -121,6 +132,10 @@ class Title extends Phaser.Scene {
         })
 
         //#endregion
+    }
+
+    update() {
+        this.isSwiping()
     }
 
     //#region ----------------------------------- CONTENT SETUP HELPERS
@@ -221,13 +236,10 @@ class Title extends Phaser.Scene {
     }
 
     clean(element, textObjects, titleText) {
-        const keyY = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Y)
-        const keyN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N)
-
         const id = titleText[textObjects.indexOf(element)].id
         const indexes = [...titleText.keys()].filter(index => titleText[index].reference === id)
 
-        keyY.on('down', () => {
+        this.input.keyboard.on('keydown-Y', () => {
             if (
                 textObjects.find(
                     targetElement =>
@@ -241,7 +253,7 @@ class Title extends Phaser.Scene {
             }
         })
 
-        keyN.on('down', () => {
+        this.input.keyboard.on('keydown-N', () => {
             indexes.forEach(targetIndex => {
                 textObjects[targetIndex].setAlpha(0)
             })
@@ -255,6 +267,7 @@ class Title extends Phaser.Scene {
     //#endregion
 
     //#region ----------------------------------- IMAGE TESTING
+
     importImage() {
         console.log('image time')
 
@@ -271,6 +284,48 @@ class Title extends Phaser.Scene {
         })
 
         this.input.click()
+    }
+
+    //#region ----------------------------------- HELPERS
+    isSwiping() {
+        if (!this.input.activePointer.isDown && this.clicking == true) {
+            // src = https://www.thepolyglotdeveloper.com/2020/09/include-touch-cursor-gesture-events-phaser-game/
+            // favor up and down movement
+            if (Math.abs(this.input.activePointer.upY - this.input.activePointer.downY) >= 50) {
+                if (this.input.activePointer.upY < this.input.activePointer.downY) {
+                    this.swipeDirection = 'up'
+                    this.dispatchSwipeEvent('UP')
+                } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
+                    this.swipeDirection = 'down'
+                    this.dispatchSwipeEvent('DOWN')
+                }
+            } else if (
+                Math.abs(this.input.activePointer.upX - this.input.activePointer.downX) >= 50
+            ) {
+                if (this.input.activePointer.upX < this.input.activePointer.downX) {
+                    this.swipeDirection = 'left'
+                    this.dispatchSwipeEvent('N')
+                } else if (this.input.activePointer.upX > this.input.activePointer.downX) {
+                    this.swipeDirection = 'right'
+                    this.dispatchSwipeEvent('Y')
+                }
+            } else {
+                this.dispatchSwipeEvent('ENTER')
+            }
+            this.clicking = false
+        } else if (this.input.activePointer.isDown && this.clicking == false) {
+            this.clicking = true
+        }
+    }
+
+    dispatchSwipeEvent(direction) {
+        const swipeEvent = new CustomEvent('swipe', {
+            detail: {
+                direction: direction,
+            },
+        })
+
+        document.dispatchEvent(swipeEvent)
     }
 }
 
