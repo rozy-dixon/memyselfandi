@@ -11,6 +11,8 @@ class Title extends Phaser.Scene {
         this.TEXTSTYLING = { fontSize: this.FONTSIZE + 'px' }
 
         this.JSON = data.JSON
+
+        this.TEXTORIGIN = mobile ? 30 : centerX
     }
 
     create() {
@@ -134,7 +136,7 @@ class Title extends Phaser.Scene {
         // add text to screen
         return this.add
             .text(
-                centerX,
+                this.TEXTORIGIN,
                 this.posY,
                 `${element.tab ? '    ' : ''}` + element.text,
                 this.TEXTSTYLING,

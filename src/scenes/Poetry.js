@@ -12,6 +12,7 @@ class Poetry extends Phaser.Scene {
             wordWrap: { width: 920, useAdvancedWrap: true },
             lineSpacing: this.PADDING - 1,
         }
+        this.TEXTORIGIN = mobile ? 30 : centerX
 
         this.STANZA = data.STANZA
         this.JSON = data.JSON
@@ -46,7 +47,7 @@ class Poetry extends Phaser.Scene {
         let index = 0
         this.JSON.poetry[this.STANZA].text.forEach(element => {
             const formattingObject = this.add
-                .text(centerX, centerY, element, this.TEXTSTYLING)
+                .text(this.TEXTORIGIN, centerY, element, this.TEXTSTYLING)
                 .setAlpha(0)
             formattingObject.getWrappedText().forEach(line => {
                 displayText.push(line)
@@ -113,7 +114,7 @@ class Poetry extends Phaser.Scene {
             })
             posY = 1200
         }
-        const textObject = this.add.text(centerX, posY, '', this.TEXTSTYLING)
+        const textObject = this.add.text(this.TEXTORIGIN, posY, '', this.TEXTSTYLING)
 
         this.stanza.add(textObject)
 
@@ -186,6 +187,6 @@ class Poetry extends Phaser.Scene {
 
     createEnd() {
         // add text to screen
-        return this.add.text(centerX, 1200, '> ' + 'press enter to return', this.TEXTSTYLING)
+        return this.add.text(this.TEXTORIGIN, 1200, '> ' + 'press enter to return', this.TEXTSTYLING)
     }
 }

@@ -28,7 +28,7 @@ class Load extends Phaser.Scene {
         if (localStorage.getItem('JSONdata') != undefined) {
             jsonData = JSON.parse(localStorage.getItem('JSONdata'))
         }
-
+        
         let infection = [
             'i have a tendency towards superstition',
             'an uncharacteristic reliance on comfortable inevitability',
@@ -45,7 +45,7 @@ class Load extends Phaser.Scene {
         ]
 
         jsonData.poetry.forEach(stanza => {
-            this.infect(infection, stanza.text)
+            stanza.text = this.infect(infection, stanza.text)
         })
 
         // moving through
@@ -56,9 +56,26 @@ class Load extends Phaser.Scene {
 
     infect(infection, poetry) {
         // src = https://chatgpt.com/share/675933e3-ddac-800d-a5b0-7ca613f3c964
+
+        // account for empty
+        if (poetry.length <= 1 && poetry[0] == '') {
+            poetry.pop()
+            poetry.push(infection)
+            return poetry
+        }
+
+        // account for length
+        let largerPoem = poetry
+        let smallerPoem = infection
+
+        if (poetry.length < infection.length) {
+            largerPoem = infection
+            smallerPoem = poetry
+        }
+
         const indeces = []
-        while (indeces.length < infection.length) {
-            const index = Math.floor(Math.random() * poetry.length + 1)
+        while (indeces.length < smallerPoem.length) {
+            const index = Math.floor(Math.random() * largerPoem.length + 1)
             if (!indeces.includes(index)) {
                 indeces.push(index)
             }
@@ -67,7 +84,9 @@ class Load extends Phaser.Scene {
         indeces.sort((a, b) => a - b)
 
         indeces.forEach((index, i) => {
-            poetry.splice(index + i, 0, infection[i])
+            largerPoem.splice(index + i, 0, smallerPoem[i])
         })
+
+        return largerPoem
     }
 }
