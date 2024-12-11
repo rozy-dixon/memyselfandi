@@ -138,13 +138,17 @@ class Poetry extends Phaser.Scene {
                             this.endButton = this.createEnd()
                             document.addEventListener('keydown', event => {
                                 if (this.endButton && event.key === 'Enter') {
-                                    location.reload()
+                                    const tone = this.sound.add('tone')
+                                    tone.play()
+                                    tone.on('complete', () => {
+                                        location.reload()
+                                    })
                                 }
                             })
 
                             clearInterval(alphaInterval)
                         }
-                    }, 50)
+                    }, 500)
 
                     // Call renderNext()
                     onComplete()

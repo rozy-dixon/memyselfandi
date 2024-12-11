@@ -8,11 +8,20 @@ class Load extends Phaser.Scene {
 
         // create default data
         this.load.json('json', './assets/text/poem.json')
+
+        this.load.audio('sound', './assets/audio/rozgame.m4a')
+        this.load.audio('tone', './assets/audio/tone.wav')
     }
 
     create() {
         // running checks
         console.log('%cLOAD SCENE :^)', testColor)
+
+        const song = this.sound.add('sound')
+        song.play()
+        song.on('complete', () => {
+            song.play()
+        })
 
         let jsonData = this.cache.json.get('json')
 
