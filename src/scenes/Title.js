@@ -17,8 +17,6 @@ class Title extends Phaser.Scene {
         // running checks
         console.log('%cTITLE SCENE :^)', testColor)
 
-        console.log(this.JSON)
-
         //#region ------------------------------- DATA RETRIEVAL
 
         this.startingPosition = this.JSON.poetry[0].location

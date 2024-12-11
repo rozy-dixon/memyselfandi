@@ -6,6 +6,7 @@ class Load extends Phaser.Scene {
     preload() {
         // loading bar
 
+        // create default data
         this.load.json('json', './assets/text/poem.json')
     }
 
@@ -13,7 +14,11 @@ class Load extends Phaser.Scene {
         // running checks
         console.log('%cLOAD SCENE :^)', testColor)
 
-        const jsonData = this.cache.json.get('json')
+        let jsonData = this.cache.json.get('json')
+
+        if (localStorage.getItem('JSONdata') != undefined) {
+            jsonData = JSON.parse(localStorage.getItem('JSONdata'))
+        }
 
         // moving through
         this.scene.start('titleScene', {

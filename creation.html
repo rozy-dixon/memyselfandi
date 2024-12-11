@@ -98,6 +98,9 @@
             /*#endregion*/
         </style>
     </head>
+
+    <!--#region --------------------------------- HTML BODY -->
+
     <body onload="loadContent()">
         <input type="text" id="title" />
         <div id="textarea">
@@ -121,6 +124,9 @@
                 onclick="uploadImage()"
             />
         </div>
+
+        <!--#endregion -->
+
         <script>
             //#region ------------------------------- LOCAL STORAGE
 
@@ -152,7 +158,7 @@
 
             //#region ------------------------------- POEM CREATION
 
-            function savePoem() {
+            function createJSON() {
                 localStorage.setItem('poem', document.getElementById('poem').value)
                 localStorage.setItem('title', document.getElementById('title').value)
 
@@ -173,21 +179,27 @@
 
                 dataDict.poetry.push(stanza)
 
+                return JSON.stringify(dataDict, null, 2)
+            }
+
+            function savePoem() {
                 // src = https://chat.brace.tools/s/be991876-78e6-49d8-8fd4-62d793745571
-                const JSONdata = JSON.stringify(dataDict, null, 2)
+                const JSONdata = createJSON()
                 const blob = new Blob([JSONdata], { type: 'application/json' })
                 const link = document.createElement('a')
                 link.href = URL.createObjectURL(blob)
                 link.download = `${localStorage.getItem('title')}.json`
+
+                console.log(JSONdata)
 
                 link.click()
                 URL.revokeObjectURL(link.URL)
             }
 
             function renderPoem() {
-                savePoem()
+                localStorage.setItem('JSONdata', createJSON())
 
-                window.location.href = 'render.html'
+                window.location.href = 'index.html'
             }
 
             setInterval(saveContent, 1000)
