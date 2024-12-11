@@ -226,10 +226,13 @@ class Title extends Phaser.Scene {
         const indexes = [...titleText.keys()].filter(index => titleText[index].reference === id)
 
         keyY.on('down', () => {
-            if(textObjects.find(targetElement =>
-                indexes.includes(textObjects.indexOf(targetElement)) &&
-                targetElement.alpha == 1,
-            )) {
+            if (
+                textObjects.find(
+                    targetElement =>
+                        indexes.includes(textObjects.indexOf(targetElement)) &&
+                        targetElement.alpha == 1,
+                )
+            ) {
                 localStorage.clear()
 
                 location.reload()

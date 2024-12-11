@@ -130,10 +130,10 @@ class Poetry extends Phaser.Scene {
 
                 if (i >= len) {
                     event.remove()
-                    
+
                     let alphaInterval = setInterval(() => {
                         if (textObject.alpha > 0) {
-                            textObject.setAlpha(textObject.alpha - .05)
+                            textObject.setAlpha(textObject.alpha - 0.05)
                         } else if (lastInStanza && textObject.alpha <= 0) {
                             this.endButton = this.createEnd()
                             document.addEventListener('keydown', event => {
@@ -173,7 +173,7 @@ class Poetry extends Phaser.Scene {
         // [ ] only destroy other's work
         let i = 0
         this.JSON.poetry[this.STANZA].text.forEach(element => {
-            if (Math.random() < .5) {
+            if (Math.random() < 0.5) {
                 this.JSON.poetry[this.STANZA].text.splice(i, 1)
             }
             i++
