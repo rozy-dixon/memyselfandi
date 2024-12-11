@@ -99,7 +99,7 @@ class Poetry extends Phaser.Scene {
 
     update() {
         if (this.input.activePointer.isDown) {
-            this.delay = 15
+            this.delay = 20
         } else {
             this.delay = 60
         }
@@ -161,7 +161,7 @@ class Poetry extends Phaser.Scene {
 
                             clearInterval(alphaInterval)
                         }
-                    }, 500)
+                    }, 600)
 
                     // Call renderNext()
                     onComplete()

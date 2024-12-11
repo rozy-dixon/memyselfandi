@@ -16,7 +16,7 @@ class Load extends Phaser.Scene {
     create() {
         // running checks
         console.log('%cLOAD SCENE :^)', testColor)
-        
+
         const song = this.sound.add('sound')
         song.play()
         song.on('complete', () => {
