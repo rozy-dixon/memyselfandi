@@ -4,7 +4,7 @@
 let dimensions = { width: 1920, height: 1280 }
 const padding = 0.01
 
-if (window.innerHeight <= window.innerWidth) {
+if (window.innerHeight >= window.innerWidth) {
     dimensions = { width: 1000, height: 1280 }
 }
 
