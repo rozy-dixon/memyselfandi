@@ -48,6 +48,11 @@ class Title extends Phaser.Scene {
                 id: 'clean',
                 function: this.clean.bind(this),
             },
+            {
+                text: 'press enter to write',
+                interactable: true,
+                function: this.write.bind(this),
+            },
             { text: 'are you sure? (y/n)', displayable: true, reference: 'clean', tab: true },
         ]
 
@@ -241,6 +246,10 @@ class Title extends Phaser.Scene {
         })
     }
 
+    write() {
+        window.location.href = 'creation.html'
+    }
+
     //#endregion
 
     //#region ----------------------------------- IMAGE TESTING
@@ -254,13 +263,11 @@ class Title extends Phaser.Scene {
             const imageFile = this.input.files[0]
             if (imageFile) {
                 console.log(imageFile)
-
-                
             } else {
                 console.log('No file selected.')
             }
         })
-        
+
         this.input.click()
     }
 }

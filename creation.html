@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Poem Renderer</title>
+        <style>
+            /*#region ------------------------------- DOCUMENT/WINDOW*/
+
+            * {
+                box-sizing: border-box;
+                padding: 0;
+                margin: 0;
+            }
+
+            html {
+                height: 100vh;
+                padding: 0;
+                margin: 0;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /*#endregion*/
+
+            /*#region ------------------------------- POEM BODY*/
+
+            #title {
+                padding: 0.5rem;
+                margin: 1rem;
+                margin-bottom: 0rem;
+                resize: none;
+                font-family: monospace;
+                border-radius: 0rem;
+                border: 1px solid #000000;
+                background-color: #ffffff;
+            }
+            #title:focus {
+                outline: none;
+            }
+
+            #textarea {
+                flex: 1;
+                padding: 0rem;
+                margin: 1rem;
+                border-radius: 0rem;
+                border: 1px solid #000000;
+                background-color: #ffffff;
+                display: flex;
+                position: relative;
+            }
+
+            #poem {
+                border: none;
+                padding: 0.5rem;
+                resize: none;
+                flex: 1;
+                font-family: monospace;
+                font-size: medium;
+            }
+            #poem:focus {
+                outline: none;
+            }
+
+            #numbers {
+                text-align: right;
+                padding: 0.5rem;
+                font-family: monospace;
+                font-size: medium;
+                border-right: 1px solid #000000;
+            }
+
+            /*#endregion*/
+
+            /*#region ------------------------------- ELSE*/
+
+            #buttons {
+                align-self: center;
+                margin-bottom: 1rem;
+            }
+
+            .button {
+                padding: 0.25rem 0.5rem;
+                border: 1px solid #000000;
+                background-color: #ffffff;
+            }
+            .button:active {
+                background-color: lightgrey;
+            }
+
+            /*#endregion*/
+        </style>
+    </head>
+    <body onload="loadContent()">
+        <input type="text" id="title" />
+        <div id="textarea">
+            <div id="numbers"></div>
+            <textarea id="poem" autofocus="true" placeholder="what do you have to say?"></textarea>
+            <div id="images"></div>
+        </div>
+        <div id="buttons">
+            <input
+                type="button"
+                class="button"
+                id="download"
+                value="render poem"
+                onclick="renderPoem()"
+            />
+            <input
+                type="button"
+                class="button"
+                id="upload-image"
+                value="upload image"
+                onclick="uploadImage()"
+            />
+        </div>
+        <script>
+            //#region ------------------------------- LOCAL STORAGE
+
+            function loadContent() {
+                if (localStorage.getItem('poem') == undefined) {
+                    localStorage.setItem('poem', '')
+                } else {
+                    document.getElementById('poem').value = localStorage.getItem('poem')
+                }
+
+                if (localStorage.getItem('title') == undefined) {
+                    localStorage.setItem('title', '')
+                } else {
+                    document.getElementById('title').value = localStorage.getItem('title')
+                }
+            }
+
+            function saveContent() {
+                if (document.getElementById('poem').value != localStorage.getItem('poem')) {
+                    localStorage.setItem('poem', document.getElementById('poem').value)
+                }
+
+                if (document.getElementById('title').value != localStorage.getItem('title')) {
+                    localStorage.setItem('title', document.getElementById('title').value)
+                }
+            }
+
+            //#endregion
+
+            //#region ------------------------------- POEM CREATION
+
+            function savePoem() {
+                localStorage.setItem('poem', document.getElementById('poem').value)
+                localStorage.setItem('title', document.getElementById('title').value)
+
+                const finalPoem = localStorage.getItem('poem').split('\n')
+
+                console.log(finalPoem)
+
+                const stanza = {
+                    location: 'poetryScene',
+                    text: finalPoem,
+                    images: [],
+                }
+
+                const dataDict = {
+                    title: localStorage.getItem('title'),
+                    poetry: [],
+                }
+
+                dataDict.poetry.push(stanza)
+
+                // src = https://chat.brace.tools/s/be991876-78e6-49d8-8fd4-62d793745571
+                const JSONdata = JSON.stringify(dataDict, null, 2)
+                const blob = new Blob([JSONdata], { type: 'application/json' })
+                const link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = `${localStorage.getItem('title')}.json`
+
+                link.click()
+                URL.revokeObjectURL(link.URL)
+            }
+
+            function renderPoem() {
+                savePoem()
+
+                window.location.href = 'render.html'
+            }
+
+            setInterval(saveContent, 1000)
+
+            //#endregion
+
+            //#region ------------------------------- TEXT SYNC
+
+            const textarea = document.getElementById('poem')
+            const numbers = document.getElementById('numbers')
+
+            function updateLineNumbers() {
+                // src = https://chat.brace.tools/s/8225534f-4c05-4c1e-9b9d-131b92847be4
+                if (textarea.value != '') {
+                    saveContent()
+                }
+                const lines = localStorage.getItem('poem').split('\n').length
+                numbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>')
+            }
+
+            function syncScroll() {
+                numbers.scrollTop = textarea.scrollTop
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                updateLineNumbers()
+            })
+
+            textarea.addEventListener('input', updateLineNumbers)
+            textarea.addEventListener('scroll', syncScroll)
+
+            updateLineNumbers()
+
+            //#endregion
+
+            //#region ------------------------------- IMAGE UPLOAD
+
+            function uploadImage() {
+                const input = document.createElement('input')
+                input.type = 'file'
+
+                input.addEventListener('change', () => {
+                    const imageFile = input.files[0]
+                    if (imageFile) {
+                        console.log(imageFile)
+                    } else {
+                        console.log('No file selected.')
+                    }
+                })
+
+                input.click()
+            }
+
+            //#endregion
+        </script>
+    </body>
+</html>
