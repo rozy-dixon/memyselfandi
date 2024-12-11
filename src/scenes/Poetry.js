@@ -69,13 +69,17 @@ class Poetry extends Phaser.Scene {
 
         this.posY = centerY
         let i = 0
+        let lastInStanza = false
 
         // [ ] add pause on begin
 
         this.image = undefined
         const renderNext = () => {
             if (i < displayText.length) {
-                this.renderLine(displayText[i], renderNext)
+                if (i == displayText.length - 1) {
+                    lastInStanza = true
+                }
+                this.renderLine(displayText[i], renderNext, lastInStanza)
                 this.renderImage(displayImage[i])
                 i++
             }
@@ -88,12 +92,12 @@ class Poetry extends Phaser.Scene {
         //#endregion
     }
 
-    renderLine(text, renderNext) {
+    renderLine(text, renderNext, lastInStanza) {
         this.posY += this.FONTSIZE + this.PADDING
-        this.typewriteText(text, this.posY, renderNext)
+        this.typewriteText(text, this.posY, renderNext, lastInStanza)
     }
 
-    typewriteText(text, posY, onComplete) {
+    typewriteText(text, posY, onComplete, lastInStanza) {
         // src = https://phaser.discourse.group/t/how-to-reveal-text-word-by-word/9183
         if (text.length == 0) {
             text = ' '
@@ -102,6 +106,7 @@ class Poetry extends Phaser.Scene {
         let i = 0
         const len = text.length
 
+        // schooch objects upward to make room
         if (posY >= 1235) {
             this.stanza.getChildren().forEach(element => {
                 element.setY(element.y - 35)
@@ -111,10 +116,6 @@ class Poetry extends Phaser.Scene {
         const textObject = this.add.text(centerX, posY, '', this.TEXTSTYLING)
 
         this.stanza.add(textObject)
-
-        console.log()
-
-        // [ ] when textobject reaches the top of the page, delete
 
         const event = this.time.addEvent({
             delay: 60,
@@ -129,6 +130,23 @@ class Poetry extends Phaser.Scene {
 
                 if (i >= len) {
                     event.remove()
+                    
+                    let alphaInterval = setInterval(() => {
+                        if (textObject.alpha > 0) {
+                            textObject.setAlpha(textObject.alpha - .05)
+                        } else if (lastInStanza && textObject.alpha <= 0) {
+                            this.endButton = this.createEnd()
+                            document.addEventListener('keydown', event => {
+                                if (this.endButton && event.key === 'Enter') {
+                                    //this.decay()
+
+                                    location.reload()
+                                }
+                            })
+
+                            clearInterval(alphaInterval)
+                        }
+                    }, 50)
 
                     // Call renderNext()
                     onComplete()
@@ -149,5 +167,23 @@ class Poetry extends Phaser.Scene {
         if (key != null) {
             this.image = this.add.image(centerX / 2, centerY, key).setOrigin(0.5, 0.5)
         }
+    }
+
+    decay() {
+        // [ ] only destroy other's work
+        let i = 0
+        this.JSON.poetry[this.STANZA].text.forEach(element => {
+            if (Math.random() < .5) {
+                this.JSON.poetry[this.STANZA].text.splice(i, 1)
+            }
+            i++
+        })
+
+        localStorage.setItem('JSONdata', JSON.stringify(this.JSON))
+    }
+
+    createEnd() {
+        // add text to screen
+        return this.add.text(centerX, 1200, '> ' + 'press enter to return', this.TEXTSTYLING)
     }
 }

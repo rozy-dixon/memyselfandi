@@ -36,20 +36,21 @@ class Title extends Phaser.Scene {
                 function: this.start.bind(this),
             },
             {
+                text: 'press enter to write',
+                interactable: true,
+                function: this.write.bind(this),
+            },
+            {
                 text: 'press enter to import',
                 interactable: true,
                 function: this.import.bind(this),
             },
+            { class: 'new-line' },
             {
                 text: 'press enter to clean',
                 interactable: true,
                 id: 'clean',
                 function: this.clean.bind(this),
-            },
-            {
-                text: 'press enter to write',
-                interactable: true,
-                function: this.write.bind(this),
             },
             { text: 'are you sure? (y/n)', displayable: true, reference: 'clean', tab: true },
         ]
@@ -118,8 +119,6 @@ class Title extends Phaser.Scene {
         })
 
         //#endregion
-
-        //this.input.on('pointerdown', this.importImage);
     }
 
     //#region ----------------------------------- CONTENT SETUP HELPERS
@@ -227,13 +226,13 @@ class Title extends Phaser.Scene {
         const indexes = [...titleText.keys()].filter(index => titleText[index].reference === id)
 
         keyY.on('down', () => {
-            const a = textObjects.find(
-                targetElement =>
-                    indexes.includes(textObjects.indexOf(targetElement)) &&
-                    targetElement.alpha == 1,
-            )
-            if (a) {
-                console.log('clean up')
+            if(textObjects.find(targetElement =>
+                indexes.includes(textObjects.indexOf(targetElement)) &&
+                targetElement.alpha == 1,
+            )) {
+                localStorage.clear()
+
+                location.reload()
             }
         })
 
