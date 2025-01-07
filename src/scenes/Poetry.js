@@ -11,6 +11,7 @@ class Poetry extends Phaser.Scene {
             fontSize: this.FONTSIZE + 'px',
             wordWrap: { width: 920, useAdvancedWrap: true },
             lineSpacing: this.PADDING - 1,
+            color: '#ffffff',
         }
         this.TEXTORIGIN = mobile ? 40 : centerX
 
@@ -51,7 +52,17 @@ class Poetry extends Phaser.Scene {
             const formattingObject = this.add
                 .text(this.TEXTORIGIN, centerY, element, this.TEXTSTYLING)
                 .setAlpha(0)
+
             formattingObject.getWrappedText().forEach(line => {
+                if (
+                    formattingObject.text
+                        .split('\n')
+                        .some(item => item.includes('%c') && item.includes(line)) &&
+                    line.slice(0, 2) != '%c'
+                ) {
+                    line = '%c' + line
+                }
+
                 displayText.push(line)
 
                 if (imageMap.has(index)) {
@@ -112,6 +123,14 @@ class Poetry extends Phaser.Scene {
 
     typewriteText(text, posY, onComplete, lastInStanza, delay = 60) {
         // src = https://phaser.discourse.group/t/how-to-reveal-text-word-by-word/9183
+
+        if (text.slice(0, 2) == '%c') {
+            text = text.substring(2)
+            this.TEXTSTYLING.color = '#ffff00'
+        } else {
+            this.TEXTSTYLING.color = '#ffffff'
+        }
+
         if (text.length == 0) {
             text = ' '
         }
