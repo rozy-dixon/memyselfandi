@@ -121,7 +121,7 @@ class Poetry extends Phaser.Scene {
         this.typewriteText(text, this.posY, renderNext, lastInStanza, this.delay)
     }
 
-    typewriteText(text, posY, onComplete, lastInStanza, delay = 60) {
+    typewriteText(text, posY, onComplete, lastInStanza, delay = 120) {
         // src = https://phaser.discourse.group/t/how-to-reveal-text-word-by-word/9183
 
         if (text.slice(0, 2) == '%c') {
@@ -180,7 +180,7 @@ class Poetry extends Phaser.Scene {
 
                             clearInterval(alphaInterval)
                         }
-                    }, 600)
+                    }, 800)
 
                     // Call renderNext()
                     onComplete()

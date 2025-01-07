@@ -30,18 +30,18 @@ class Load extends Phaser.Scene {
         }
 
         let infection = [
-            '%ci have a tendency towards superstition',
-            '%can uncharacteristic reliance on comfortable inevitability',
-            '%cand a stubbornness',
-            '%cit tells me i’m supposed to be here',
-            "%cthat even if it's not clear now",
-            '%cit will be',
-            "%cit's kismet",
-            "%cbut if i'm honest, i know there’s little that i'll always do",
-            '%cand in the end',
-            '%ci want',
-            '%cmore than anything',
-            '%cto have fed you well.',
+            'i have a tendency towards superstition',
+            'an uncharacteristic reliance on comfortable inevitability',
+            'and a stubbornness',
+            'it tells me i’m supposed to be here',
+            "that even if it's not clear now",
+            'it will be',
+            "it's kismet",
+            "but if i'm honest, i know there’s little that i'll always do",
+            'and in the end',
+            'i want',
+            'more than anything',
+            'to have fed you well.',
         ]
 
         jsonData.poetry.forEach(stanza => {
